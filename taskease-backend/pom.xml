@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>dev.alesordo</groupId>
-	<artifactId>taskease</artifactId>
+	<artifactId>taskease-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>taskease</name>
 	<description>Demo project for Spring Boot</description>

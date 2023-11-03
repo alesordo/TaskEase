@@ -1,0 +1,32 @@
+/* Here you can add global styles configuration for the project, including variables */
+
+// Google fonts
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&family=Work+Sans:wght@400;700&display=swap');
+
+// Colors
+$amber: #FFC107;
+$orange: #FF9800;
+$light-orange: #FFCC80;
+$deep-orange: #FF5722;
+
+$light: #f8f8f8;
+
+// Update Bulma's global variables
+$family-sans-serif: "Rubik", sans-serif;
+$primary: $orange;
+
+$link: $light-orange;
+
+// Update Bulma's components variables
+$control-border-width: 2px;
+$input-border-color: transparent;
+$input-shadow: none;
+
+// Custom global styles for all the app
+html{
+  background: linear-gradient(to right top, $amber, $orange);
+}
+
+html, body{
+  height: 100%;
+}
