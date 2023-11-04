@@ -1,0 +1,156 @@
+@import '../../../main-styles.scss';
+
+.navbar{
+  display: flex;
+  flex-direction: column;
+  height: 5%;
+}
+
+.app-name{
+  font-size: 28px;
+  font-family: "Rubik", sans-serif;
+  font-weight: bold;
+}
+
+.has-gradient-text{
+  background: -webkit-linear-gradient($orange, $light-orange);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.centered-content{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 90%;
+}
+
+.project-manager-container{
+  display: flex;
+  width: 100%;
+  height: 90%;
+  max-width: 1200px;
+  max-height: 680px;
+}
+
+.sidebar{
+  display: flex;
+  flex-direction: column;
+
+  width: 250px;
+  background: white;
+
+  padding: 42px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.project-kanban-board-container{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 42px;
+
+  min-width: 0;
+  min-height: 0;
+
+  .board-wrapper{
+    display: flex;
+    flex-grow: 1;
+    overflow-x:auto;
+
+    .board-columns{
+      display: flex;
+      flex-grow: 1;
+
+      .board-column{
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        min-width: 150px;
+        padding: 5px;
+        margin: 0px 15px;
+        flex-basis: 0; //to force all columns to be the same size
+
+        border-radius: 5px;
+
+        background: rgba(white, 0.5);
+
+        &:not(:first-child){
+          margin-left: 0;
+        }
+
+        .column-title{
+          font-size: 20px;
+          font-weight: 800;
+          font-family: "Rubik", sans-serif;
+          //text-transform: uppercase;
+          margin-bottom: 20px;
+        }
+      }
+    }
+  }
+}
+
+.title{
+  font-family: "Rubik";
+  font-size: 24px;
+  text-transform: uppercase;
+}
+
+.project-menu{
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+  flex-grow: 1;
+
+  .project-menu-item{
+    display: flex;
+
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: 5px;
+
+    width: 100%;
+    color: #5f5f5f;
+    margin-bottom: 5px;
+
+    &:hover{
+      background: $light;
+    }
+
+    &.is-active{
+      background-color: #f8eacf;
+      color: $deep-orange;
+    }
+  }
+}
+
+.task{
+  background: white;
+  padding: 15px 20px;
+  border-radius: 5px;
+  margin-top: 10px;
+
+  &:not(.complete){
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:active{
+      transform: scale(0.95);
+    }
+
+    &:hover{
+      box-shadow: 0 0 0 5px #eeeeee;
+    }
+  }
+
+  &.complete{
+    text-decoration: line-through;
+    opacity: 0.8;
+  }
+}
