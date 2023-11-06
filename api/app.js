@@ -1,0 +1,44 @@
+const express = require('express');
+const app = express();
+
+/* Route handlers */
+
+/* Projects routes */
+
+/**
+ * GET /projects
+ * Purpose: Get all projects
+ */
+app.get('/projects', (req,res) => {
+    // Return an array of all the projects in the database
+})
+
+/**
+ * POST /projects
+ * Purpose: Create a project
+ */
+app.post('/projects', (req,res) => {
+    // Create a new project and returns the new project document to the user (with id)
+    // The project information (fields) will be passed in via the JSON body
+});
+
+
+/**
+ * PATH /projects/:id
+ * Purpose: Update a specified project
+ */
+app.patch('/projects/:id', (req,res)=>{
+    // Update specified project (project document with id in the URL) with the new values of the JSON body of the request
+})
+
+/**
+ * DELETE /projects/
+ * Purpose: Delete a specified project
+ */
+app.delete('/projects/:id', (req,res) => {
+    // Delete a specified project (document with id in the url)
+})
+
+app.listen(3000, () => {
+    console.log("Server is listening on port 3000");
+})

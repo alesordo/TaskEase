@@ -7,6 +7,7 @@ import {
   CdkDrag,
   CdkDropList,
 } from '@angular/cdk/drag-drop';
+import {Board} from "../../models/board.model";
 
 @Component({
   selector: 'app-project-view',
@@ -14,11 +15,12 @@ import {
   styleUrls: ['./project-view.component.scss']
 })
 export class ProjectViewComponent {
-  todo = ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'];
 
-  doing= ['Hello'];
-
-  done = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  board: Board = new Board('Test Board', [
+    ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'],
+    ['Hello'],
+    ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog']
+  ])
 
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
