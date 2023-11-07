@@ -1,5 +1,4 @@
 // This file will handle the connection logic to the MongoDB database
-
 const mongoose = require("mongoose");
 
 mongoose.Promise = global.Promise;

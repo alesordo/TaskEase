@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const ListSchema = new mongoose.Schema({
+const ProjectSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -8,3 +8,7 @@ const ListSchema = new mongoose.Schema({
         trim: true
     }
 })
+
+const Project = mongoose.model('Project', ProjectSchema);
+
+module.exports = {Project}

@@ -1,6 +1,16 @@
 const express = require('express');
 const app = express();
 
+const {mongoose} = require('./db/mongoose');
+
+const bodyParser = require('body-parser');
+
+// Load in mongoose models
+const { Project, Task } = require('./db/models');
+
+// Load middleware
+app.use(bodyParser.json());
+
 /* Route handlers */
 
 /* Projects routes */
@@ -11,6 +21,9 @@ const app = express();
  */
 app.get('/projects', (req,res) => {
     // Return an array of all the projects in the database
+    Project.find({}).then((projects) => {
+        res.send(projects);
+    })
 })
 
 /**
@@ -20,6 +33,16 @@ app.get('/projects', (req,res) => {
 app.post('/projects', (req,res) => {
     // Create a new project and returns the new project document to the user (with id)
     // The project information (fields) will be passed in via the JSON body
+    let title = req.body.title;
+
+    let newProject = new Project({
+        title
+    });
+
+    newProject.save().then((projectDoc) => {
+        // The full project document is returned (incl. id)
+        res.send(projectDoc);
+    })
 });
 
 
@@ -29,6 +52,11 @@ app.post('/projects', (req,res) => {
  */
 app.patch('/projects/:id', (req,res)=>{
     // Update specified project (project document with id in the URL) with the new values of the JSON body of the request
+    Project.findOneAndUpdate({_id: req.params.id}, {
+      $set: req.body
+    }).then(() => {
+        res.sendStatus(200);
+    })
 })
 
 /**
@@ -37,6 +65,10 @@ app.patch('/projects/:id', (req,res)=>{
  */
 app.delete('/projects/:id', (req,res) => {
     // Delete a specified project (document with id in the url)
+    Project.findOneAndDelete({
+        _id: req.params.id}).then((removedListDoc) => {
+        res.send(removedListDoc);
+    })
 })
 
 app.listen(3000, () => {
