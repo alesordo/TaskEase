@@ -35,10 +35,10 @@ const TaskSchema = new mongoose.Schema({
         required: true,
         default: 0
     },
-    kanbanPosition: {
+    statusIndex: {
         type: Number,
         required: true,
-        default: 0
+        default: 1024
     }
 })
 

@@ -7,15 +7,20 @@ import { ProjectViewComponent } from './pages/project-view/project-view.componen
 
 import { DragDropModule } from "@angular/cdk/drag-drop";
 
+import { HttpClientModule } from "@angular/common/http";
+import { NewProjectComponent } from './pages/new-project/new-project.component';
+
 @NgModule({
   declarations: [
     AppComponent,
-    ProjectViewComponent
+    ProjectViewComponent,
+    NewProjectComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    DragDropModule
+    DragDropModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

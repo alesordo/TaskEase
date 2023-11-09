@@ -8,6 +8,8 @@ import {
   CdkDropList,
 } from '@angular/cdk/drag-drop';
 import {Board} from "../../models/board.model";
+import {TaskService} from "../../task.service";
+import {ActivatedRoute, Params} from "@angular/router";
 
 @Component({
   selector: 'app-project-view',
@@ -15,6 +17,21 @@ import {Board} from "../../models/board.model";
   styleUrls: ['./project-view.component.scss']
 })
 export class ProjectViewComponent {
+
+  projects: any;
+
+  constructor(private taskService: TaskService, private route: ActivatedRoute) { }
+
+  ngOnInit(){
+    this.route.params.subscribe((
+      (params: Params) => {
+        console.log(params);
+      }
+    ))
+    this.taskService.getProjects().subscribe((projects: Object) => {
+      console.log(projects)
+    })
+  }
 
   board: Board = new Board('Test Board', [
     ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'],
