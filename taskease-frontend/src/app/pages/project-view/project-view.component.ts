@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgFor} from '@angular/common';
 import {
   CdkDragDrop,
@@ -8,17 +8,23 @@ import {
   CdkDropList,
 } from '@angular/cdk/drag-drop';
 import {Board} from "../../models/board.model";
+import {Task} from "../../models/task.model";
 import {TaskService} from "../../task.service";
 import {ActivatedRoute, Params} from "@angular/router";
+import {Project} from "../../models/project.model";
+import {NONE_TYPE} from "@angular/compiler";
 
 @Component({
   selector: 'app-project-view',
   templateUrl: './project-view.component.html',
   styleUrls: ['./project-view.component.scss']
 })
-export class ProjectViewComponent {
+export class ProjectViewComponent implements OnInit {
 
-  projects: any;
+  projects: Project[];
+  tasks: Task[];
+  toDoTasksTitles : string[];
+  board: Board;
 
   constructor(private taskService: TaskService, private route: ActivatedRoute) { }
 
@@ -26,18 +32,26 @@ export class ProjectViewComponent {
     this.route.params.subscribe((
       (params: Params) => {
         console.log(params);
+        this.taskService.getTasks(params['projectId']).subscribe((tasks: Task[]) => {
+          this.tasks = tasks.sort((a, b) => a.statusIndex - b.statusIndex);
+          this.toDoTasksTitles = this.tasks.filter(
+              task => task.taskStatus == 0).map(task => task.title);
+          // TODO: Add filtering for doing and done and pass to the board object
+        });
       }
     ))
-    this.taskService.getProjects().subscribe((projects: Object) => {
-      console.log(projects)
+    this.taskService.getProjects().subscribe((projects: Project[]) => {
+      this.projects = projects;
+      console.log(projects);
     })
+    this.board = new Board('Test Board', [
+      [],
+      ['Hello'],
+      ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog']
+    ])
   }
 
-  board: Board = new Board('Test Board', [
-    ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'],
-    ['Hello'],
-    ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog']
-  ])
+
 
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
@@ -51,4 +65,6 @@ export class ProjectViewComponent {
       );
     }
   }
+
+  protected readonly Task = Task;
 }

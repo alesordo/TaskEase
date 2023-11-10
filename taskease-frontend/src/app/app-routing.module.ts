@@ -7,7 +7,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/projects', pathMatch: 'full'},
   { path: 'new-project', component: NewProjectComponent},
   { path: 'projects', component: ProjectViewComponent},
-  { path: 'projects/:listId', component: ProjectViewComponent}
+  { path: 'projects/:projectId', component: ProjectViewComponent}
 ];
 
 @NgModule({

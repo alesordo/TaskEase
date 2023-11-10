@@ -16,11 +16,8 @@
         <a class="project-menu-item is-active">
           <p>Project #1</p>
         </a>
-        <a class="project-menu-item">
-          <p>Project #2</p>
-        </a>
-        <a class="project-menu-item">
-          <p>Project #3</p>
+        <a class="project-menu-item" *ngFor="let project of projects" [routerLink]="['/projects', project._id]">
+          <p>{{ project.title }}</p>
         </a>
       </div>
 
@@ -36,7 +33,7 @@
         <div class="board-columns" cdkDropListGroup>
           <div class="board-column"
                cdkDropList
-               [cdkDropListData]="board.tasks[0]"
+               [cdkDropListData]="toDoTasksTitles"
                (cdkDropListDropped)="drop($event)">
 
             <div class="column-title">
@@ -44,7 +41,7 @@
             </div>
 
             <div class="tasks-container">
-              <div class="task" *ngFor="let item of board.tasks[0]" cdkDrag>{{item}}</div>
+              <div class="task" *ngFor="let item of toDoTasksTitles" cdkDrag>{{item}}</div>
             </div>
           </div>
 
