@@ -13,10 +13,7 @@
         Projects
       </h1>
       <div class="project-menu">
-        <a class="project-menu-item is-active">
-          <p>Project #1</p>
-        </a>
-        <a class="project-menu-item" *ngFor="let project of projects" [routerLink]="['/projects', project._id]">
+        <a class="project-menu-item" *ngFor="let project of projects" [routerLink]="['/projects', project._id]" routerLinkActive="is-active">
           <p>{{ project.title }}</p>
         </a>
       </div>
@@ -33,7 +30,7 @@
         <div class="board-columns" cdkDropListGroup>
           <div class="board-column"
                cdkDropList
-               [cdkDropListData]="toDoTasksTitles"
+               [cdkDropListData]="toDoTasks"
                (cdkDropListDropped)="drop($event)">
 
             <div class="column-title">
@@ -41,13 +38,13 @@
             </div>
 
             <div class="tasks-container">
-              <div class="task" *ngFor="let item of toDoTasksTitles" cdkDrag>{{item}}</div>
+              <div class="task" *ngFor="let item of toDoTasks" cdkDrag>{{item.title}}</div>
             </div>
           </div>
 
           <div class="board-column"
                cdkDropList
-               [cdkDropListData]="board.tasks[1]"
+               [cdkDropListData]="doingTasks"
                (cdkDropListDropped)="drop($event)">
 
             <div class="column-title">
@@ -55,13 +52,13 @@
             </div>
 
             <div class="tasks-container">
-              <div class="task" *ngFor="let item of board.tasks[1]" cdkDrag>{{item}}</div>
+              <div class="task" *ngFor="let item of doingTasks" cdkDrag>{{item.title}}</div>
             </div>
           </div>
 
           <div class="board-column"
                cdkDropList
-               [cdkDropListData]="board.tasks[2]"
+               [cdkDropListData]="doneTasks"
                (cdkDropListDropped)="drop($event)">
 
             <div class="column-title">
@@ -69,19 +66,16 @@
             </div>
 
             <div class="tasks-container">
-              <div class="task" *ngFor="let item of board.tasks[2]" cdkDrag>{{item}}</div>
+              <div class="task" *ngFor="let item of doneTasks" cdkDrag>{{item.title}}</div>
             </div>
           </div>
         </div>
 
       </div>
 
-<!--      <div class="task">-->
-<!--        <p>This is something I have to do</p>-->
-<!--      </div>-->
-<!--      <div class="task complete">-->
-<!--        <p>This is something I have to do</p>-->
-<!--      </div>-->
+      <button class="circle-add-button button is-primary">
+        <img id="plus-icon" src="../../../assets/plus-icon.svg" />
+      </button>
     </div>
 
   </div>

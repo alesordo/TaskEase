@@ -90,7 +90,8 @@ app.get("/projects/:projectId/tasks", (req,res) => {
     // Return all tasks belonging to a specific project
     Task.find({
         _projectId: req.params.projectId
-    }).then((tasks) => {
+    }).sort({statusIndex : 'asc'})
+        .then((tasks) => {
         res.send(tasks);
     })
 });
@@ -113,19 +114,32 @@ app.get("/projects/:projectId/tasks/:taskId", (req, res) => {
  * POST /projects/:projectId/tasks
  */
 app.post("/projects/:projectId/tasks", (req,res) => {
-    // Create a new task in a project, specified by a project id
-    let newTask = new Task({
-        title: req.body.title,
-        description: req.body.description,
-        dueDate: req.body.dueDate,
-        estimatedTime: req.body.estimatedTime,
-        taskStatus: req.body.taskStatus,
-        _projectId: req.params.projectId
-    });
+    let taskIndex = 0;
 
-    newTask.save().then((newTaskDoc) => {
-        res.send(newTaskDoc);
-    })
+    // Check the index of the last task
+    Task.findOne({_projectId: req.params.projectId, taskStatus : req.body.taskStatus}).sort({statusIndex : 'desc'}).then((lastTask) => {
+        let maxIndex;
+
+        if(lastTask != null)
+            maxIndex = lastTask.statusIndex;
+        else
+            maxIndex = 0;
+
+        // Create a new task in a project, specified by a project id
+        let newTask = new Task({
+            title: req.body.title,
+            description: req.body.description,
+            dueDate: req.body.dueDate,
+            estimatedTime: req.body.estimatedTime,
+            taskStatus: req.body.taskStatus,
+            _projectId: req.params.projectId,
+            statusIndex: maxIndex + 1024
+        });
+
+        newTask.save().then((newTaskDoc) => {
+            res.send(newTaskDoc);
+        })
+    });
 });
 
 /**

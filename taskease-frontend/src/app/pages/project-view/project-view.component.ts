@@ -23,8 +23,16 @@ export class ProjectViewComponent implements OnInit {
 
   projects: Project[];
   tasks: Task[];
-  toDoTasksTitles : string[];
   board: Board;
+
+  toDoTasks: Task[];
+  toDoTasksTitles : string[];
+
+  doingTasks: Task[];
+  doingTasksTitles: string[];
+
+  doneTasks: Task[];
+  doneTasksTitles: string[];
 
   constructor(private taskService: TaskService, private route: ActivatedRoute) { }
 
@@ -32,28 +40,32 @@ export class ProjectViewComponent implements OnInit {
     this.route.params.subscribe((
       (params: Params) => {
         console.log(params);
-        this.taskService.getTasks(params['projectId']).subscribe((tasks: Task[]) => {
-          this.tasks = tasks.sort((a, b) => a.statusIndex - b.statusIndex);
-          this.toDoTasksTitles = this.tasks.filter(
-              task => task.taskStatus == 0).map(task => task.title);
-          // TODO: Add filtering for doing and done and pass to the board object
-        });
+        this.taskService.getProjects().subscribe((projects: Project[]) => {
+          this.projects = projects;
+          console.log(projects);
+        })
+        if (params['projectId'] != null) {
+          this.taskService.getTasks(params['projectId']).subscribe((tasks: Task[]) => {
+            // // Getting all tasks
+            this.tasks = tasks;
+
+            // Getting to do tasks
+            this.toDoTasks = this.tasks.filter(task => task.taskStatus == 0);
+
+            // Getting doing tasks
+            this.doingTasks = this.tasks.filter(task => task.taskStatus == 1);
+
+            // Getting done tasks
+            this.doneTasks = this.tasks.filter(task => task.taskStatus == 2);
+          });
+        }
       }
     ))
-    this.taskService.getProjects().subscribe((projects: Project[]) => {
-      this.projects = projects;
-      console.log(projects);
-    })
-    this.board = new Board('Test Board', [
-      [],
-      ['Hello'],
-      ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog']
-    ])
   }
 
 
 
-  drop(event: CdkDragDrop<string[]>) {
+  drop(event: CdkDragDrop<Task[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {

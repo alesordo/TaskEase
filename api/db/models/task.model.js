@@ -37,8 +37,7 @@ const TaskSchema = new mongoose.Schema({
     },
     statusIndex: {
         type: Number,
-        required: true,
-        default: 1024
+        required: true
     }
 })
 

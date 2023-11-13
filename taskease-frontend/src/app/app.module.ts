@@ -9,12 +9,14 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 
 import { HttpClientModule } from "@angular/common/http";
 import { NewProjectComponent } from './pages/new-project/new-project.component';
+import { NewTaskComponent } from './pages/new-task/new-task.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ProjectViewComponent,
-    NewProjectComponent
+    NewProjectComponent,
+    NewTaskComponent
   ],
   imports: [
     BrowserModule,
