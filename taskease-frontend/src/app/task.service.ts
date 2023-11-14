@@ -33,4 +33,26 @@ export class TaskService {
     // return this.webReqService.get(`projects/${projectId}/tasks`);
     return this.http.get<Task[]>(`${this.ROOT_URL}/projects/${projectId}/tasks`)
   }
+
+  createTask(title: string, projectId: string){
+    // Default bucket, To do
+    const taskStatus = 0;
+    // Sends a web request to create a task
+    return this.http.post<Task>(`${this.ROOT_URL}/projects/${projectId}/tasks`, {title, taskStatus});
+  }
+
+  updateTasksBin(tasks: Task[]){
+    let status = {message: "Updated successfully"};
+
+    tasks.map((task) => {
+     this.http.patch(`${this.ROOT_URL}/projects/${task._projectId}/tasks/${task._id}`,
+       {taskStatus: task.taskStatus, statusIndex: task.statusIndex
+       }).subscribe((res: any) => {
+         if(res !== status)
+           status.message = "Errors while updating";
+     });
+    })
+
+    return status;
+  }
 }

@@ -193,9 +193,8 @@
   border-radius: 50%;
 
   #plus-icon{
-    height: auto;
     max-width: 20px;
-    object-fit: cover;
+    height: 20px;
     filter: invert(100%);
   }
 }

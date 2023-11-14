@@ -10,6 +10,9 @@ import { DragDropModule } from "@angular/cdk/drag-drop";
 import { HttpClientModule } from "@angular/common/http";
 import { NewProjectComponent } from './pages/new-project/new-project.component';
 import { NewTaskComponent } from './pages/new-task/new-task.component';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -18,12 +21,15 @@ import { NewTaskComponent } from './pages/new-task/new-task.component';
     NewProjectComponent,
     NewTaskComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    DragDropModule,
-    HttpClientModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        DragDropModule,
+        HttpClientModule,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        NgOptimizedImage
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

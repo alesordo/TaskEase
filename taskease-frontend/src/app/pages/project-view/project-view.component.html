@@ -17,7 +17,6 @@
           <p>{{ project.title }}</p>
         </a>
       </div>
-
       <button class="button is-primary has-text-white" routerLink="/new-project">+ New Project</button>
     </div>
     <div class="project-kanban-board-container has-background-light">
@@ -30,6 +29,7 @@
         <div class="board-columns" cdkDropListGroup>
           <div class="board-column"
                cdkDropList
+               #toDoList="cdkDropList"
                [cdkDropListData]="toDoTasks"
                (cdkDropListDropped)="drop($event)">
 
@@ -44,6 +44,7 @@
 
           <div class="board-column"
                cdkDropList
+               #doingList="cdkDropList"
                [cdkDropListData]="doingTasks"
                (cdkDropListDropped)="drop($event)">
 
@@ -58,6 +59,7 @@
 
           <div class="board-column"
                cdkDropList
+               #doneList="cdkDropList"
                [cdkDropListData]="doneTasks"
                (cdkDropListDropped)="drop($event)">
 
@@ -73,8 +75,8 @@
 
       </div>
 
-      <button class="circle-add-button button is-primary">
-        <img id="plus-icon" src="../../../assets/plus-icon.svg" />
+      <button routerLink="./new-task"  class="circle-add-button button is-primary">
+        <img src="../../../assets/plus-icon.png"  id="plus-icon" />
       </button>
     </div>
 

@@ -7,9 +7,9 @@ import {NewTaskComponent} from "./pages/new-task/new-task.component";
 const routes: Routes = [
   { path: '', redirectTo: '/projects', pathMatch: 'full'},
   { path: 'new-project', component: NewProjectComponent},
-  { path: 'new-task', component: NewTaskComponent},
   { path: 'projects', component: ProjectViewComponent},
-  { path: 'projects/:projectId', component: ProjectViewComponent}
+  { path: 'projects/:projectId', component: ProjectViewComponent},
+  { path: 'projects/:projectId/new-task', component: NewTaskComponent}
 ];
 
 @NgModule({

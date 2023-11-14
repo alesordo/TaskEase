@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 let FRONTEND_URI = "http://localhost:4200";
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", FRONTEND_URI); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Methods",  "GET, POST, HEAD, OPTION, PUT, PATCH, DELETE");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
@@ -112,12 +113,13 @@ app.get("/projects/:projectId/tasks/:taskId", (req, res) => {
 
 /**
  * POST /projects/:projectId/tasks
+ * Purpose: Create a new task for a specified project in a specified bucket
  */
 app.post("/projects/:projectId/tasks", (req,res) => {
     let taskIndex = 0;
 
     // Check the index of the last task
-    Task.findOne({_projectId: req.params.projectId, taskStatus : req.body.taskStatus}).sort({statusIndex : 'desc'}).then((lastTask) => {
+    Task.findOne({_projectId: req.params.projectId, taskStatus : req.body.taskStatus}).sort({statusIndex : -1}).then((lastTask) => {
         let maxIndex;
 
         if(lastTask != null)
@@ -125,15 +127,14 @@ app.post("/projects/:projectId/tasks", (req,res) => {
         else
             maxIndex = 0;
 
+        taskIndex = maxIndex + 1024
+
         // Create a new task in a project, specified by a project id
         let newTask = new Task({
             title: req.body.title,
-            description: req.body.description,
-            dueDate: req.body.dueDate,
-            estimatedTime: req.body.estimatedTime,
             taskStatus: req.body.taskStatus,
             _projectId: req.params.projectId,
-            statusIndex: maxIndex + 1024
+            statusIndex: taskIndex
         });
 
         newTask.save().then((newTaskDoc) => {
@@ -154,9 +155,26 @@ app.patch("/projects/:projectId/tasks/:taskId", (req, res) => {
     }, {
         $set: req.body
     }).then(() =>{
-        res.sendStatus(200);
+        // res.sendStatus(200);
+        res.send({message: "Updated successfully"});
     })
 });
+
+// /**
+//  * PATCH /projects/:projectId/tasks/
+//  * Purpose: update existing tasks
+//  */
+// app.patch("/projects/:projectId/tasks/:taskId", (req, res) => {
+//     // Update specific task specified by taskId
+//     Task.findOneAndUpdate({
+//         _id: req.params.taskId,
+//         _projectId: req.params.projectId
+//     }, {
+//         $set: req.body
+//     }).then(() =>{
+//         res.sendStatus(200);
+//     })
+// });
 
 /**
  * DELETE /projects/:projectId/tasks/:taskId

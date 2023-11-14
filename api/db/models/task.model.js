@@ -19,16 +19,19 @@ const TaskSchema = new mongoose.Schema({
     },
     dueDate: {
         type: Date,
-        required: true
+        // required:
+        required: false
     },
     estimatedTime: {
         type: Number,
-        required: true
+        // required: true
+        required: false
     },
     spentTime: {
         type: Number,
         default: 0,
-        required: true
+        // required: true
+        required: false
     },
     taskStatus: {
         type: Number,

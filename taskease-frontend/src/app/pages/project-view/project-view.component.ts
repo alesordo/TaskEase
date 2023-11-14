@@ -23,16 +23,14 @@ export class ProjectViewComponent implements OnInit {
 
   projects: Project[];
   tasks: Task[];
-  board: Board;
 
   toDoTasks: Task[];
-  toDoTasksTitles : string[];
 
   doingTasks: Task[];
-  doingTasksTitles: string[];
 
   doneTasks: Task[];
-  doneTasksTitles: string[];
+
+  projectSelected = false;
 
   constructor(private taskService: TaskService, private route: ActivatedRoute) { }
 
@@ -63,11 +61,18 @@ export class ProjectViewComponent implements OnInit {
     ))
   }
 
-
-
   drop(event: CdkDragDrop<Task[]>) {
+    let updatedTasks: Task[];
+
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+
+      // Getting all tasks from new container and saving them in updatedTasks
+      for (let i = 0; i < event.container.data.length; i++) {
+        event.container.data[i].statusIndex = (1024) * (i+1);
+      }
+
+      updatedTasks = event.container.data;
     } else {
       transferArrayItem(
         event.previousContainer.data,
@@ -75,8 +80,25 @@ export class ProjectViewComponent implements OnInit {
         event.previousIndex,
         event.currentIndex,
       );
-    }
-  }
+      // Changing taskStatus of the moved task
+      event.container.data[event.currentIndex].taskStatus = Number(event.container.id.replace(/\D/g, ""));
 
-  protected readonly Task = Task;
+      console.log(event.container.id);
+
+      // Getting all tasks from previous container and saving them in updatedTasks
+      for (let i = 0; i < event.previousContainer.data.length; i++) {
+        event.previousContainer.data[i].statusIndex = (1024) * (i+1);
+      }
+      updatedTasks = event.previousContainer.data;
+
+      // Getting all tasks from new container and saving them in updatedTasks
+      for (let i = 0; i < event.container.data.length; i++) {
+        event.container.data[i].statusIndex = (1024) * (i+1);
+      }
+      updatedTasks = updatedTasks.concat(event.container.data);
+    }
+
+    // Sending the update to server
+    this.taskService.updateTasksBin(updatedTasks);
+  }
 }
