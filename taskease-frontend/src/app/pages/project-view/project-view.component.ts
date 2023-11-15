@@ -80,10 +80,16 @@ export class ProjectViewComponent implements OnInit {
         event.previousIndex,
         event.currentIndex,
       );
-      // Changing taskStatus of the moved task
-      event.container.data[event.currentIndex].taskStatus = Number(event.container.id.replace(/\D/g, ""));
-
-      console.log(event.container.id);
+      // Changing taskStatus of the moved task based on the destination container
+      //event.container.data[event.currentIndex].taskStatus = Number(event.container.id.replace(/\D/g, ""));
+      switch(event.container.id){
+        case 'to-do-list': event.container.data[event.currentIndex].taskStatus = 0;
+        break;
+        case 'doing-list': event.container.data[event.currentIndex].taskStatus = 1;
+        break;
+        case 'done-list': event.container.data[event.currentIndex].taskStatus = 2;
+        break;
+      }
 
       // Getting all tasks from previous container and saving them in updatedTasks
       for (let i = 0; i < event.previousContainer.data.length; i++) {

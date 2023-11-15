@@ -49,50 +49,47 @@
 
   min-width: 0;
   min-height: 0;
+  .kanban-whole-wrapper {
+    display: contents;
 
-  .board-wrapper{
-    display: flex;
-    flex-grow: 1;
-    overflow-x:auto;
-
-    .board-columns{
+    .board-wrapper {
       display: flex;
       flex-grow: 1;
+      overflow-x: auto;
 
-      .board-column{
+      .board-columns {
         display: flex;
-        flex-direction: column;
         flex-grow: 1;
 
-        min-width: 150px;
-        padding: 8px;
-        margin: 0px 15px;
-        flex-basis: 0; //to force all columns to be the same size
+        .board-column {
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
 
-        border-radius: 5px;
+          min-width: 150px;
+          padding: 8px;
+          margin: 0px 15px;
+          flex-basis: 0; //to force all columns to be the same size
 
-        background: rgba(white, 0.5);
+          border-radius: 5px;
 
-        &:not(:first-child){
-          margin-left: 0;
-        }
+          background: rgba(white, 0.5);
 
-        .column-title{
-          font-size: 20px;
-          font-weight: 800;
-          font-family: "Rubik", sans-serif;
-          //text-transform: uppercase;
-          margin-bottom: 15px;
+          &:not(:first-child) {
+            margin-left: 0;
+          }
+
+          .column-title {
+            font-size: 20px;
+            font-weight: 800;
+            font-family: "Rubik", sans-serif;
+            //text-transform: uppercase;
+            margin-bottom: 15px;
+          }
         }
       }
     }
   }
-}
-
-.title{
-  font-family: "Rubik";
-  font-size: 24px;
-  text-transform: uppercase;
 }
 
 .project-menu{
@@ -122,31 +119,6 @@
     }
   }
 }
-
-//.task{
-//  background: white;
-//  padding: 15px 20px;
-//  border-radius: 5px;
-//  margin-top: 10px;
-//
-//  &:not(.complete){
-//    cursor: pointer;
-//    transition: box-shadow 0.2s ease, transform 0.2s ease;
-//
-//    &:active{
-//      transform: scale(0.95);
-//    }
-//
-//    &:hover{
-//      box-shadow: 0 0 0 5px #eeeeee;
-//    }
-//  }
-//
-//  &.complete{
-//    text-decoration: line-through;
-//    opacity: 0.8;
-//  }
-//}
 
 .tasks-container{
   //flex-grow: 1;
@@ -197,4 +169,10 @@
     height: 20px;
     filter: invert(100%);
   }
+}
+
+.empty-state-text{
+  font-size: 20px;
+  color: #777;
+  text-align: center;
 }

@@ -20,64 +20,76 @@
       <button class="button is-primary has-text-white" routerLink="/new-project">+ New Project</button>
     </div>
     <div class="project-kanban-board-container has-background-light">
-      <h1 class="title has-text-primary">
-        Kanban board
-      </h1>
+      <div class="kanban-whole-wrapper" *ngIf="tasks">
+        <h1 class="title has-text-primary">
+          Kanban board
+        </h1>
 
-      <div class="board-wrapper">
+        <div class="board-wrapper" *ngIf="tasks.length !== 0">
 
-        <div class="board-columns" cdkDropListGroup>
-          <div class="board-column"
-               cdkDropList
-               #toDoList="cdkDropList"
-               [cdkDropListData]="toDoTasks"
-               (cdkDropListDropped)="drop($event)">
+          <div class="board-columns" cdkDropListGroup>
+            <div class="board-column"
+                 cdkDropList
+                 id="to-do-list"
+                 [cdkDropListConnectedTo]="['doing-list', 'done-list']"
+                 [cdkDropListData]="toDoTasks"
+                 (cdkDropListDropped)="drop($event)">
 
-            <div class="column-title">
-              To do
+              <div class="column-title">
+                To do
+              </div>
+
+              <div class="tasks-container">
+                <div class="task" *ngFor="let item of toDoTasks" cdkDrag>{{item.title}}</div>
+              </div>
             </div>
 
-            <div class="tasks-container">
-              <div class="task" *ngFor="let item of toDoTasks" cdkDrag>{{item.title}}</div>
+            <div class="board-column"
+                 cdkDropList
+                 id="doing-list"
+                 [cdkDropListConnectedTo]="['to-do-list', 'done-list']"
+                 [cdkDropListData]="doingTasks"
+                 (cdkDropListDropped)="drop($event)">
+
+              <div class="column-title">
+                In progress
+              </div>
+
+              <div class="tasks-container">
+                <div class="task" *ngFor="let item of doingTasks" cdkDrag>{{item.title}}</div>
+              </div>
+            </div>
+
+            <div class="board-column"
+                 cdkDropList
+                 id="done-list"
+                 [cdkDropListConnectedTo]="['doing-list', 'to-do-list']"
+                 [cdkDropListData]="doneTasks"
+                 (cdkDropListDropped)="drop($event)">
+
+              <div class="column-title">
+                Done
+              </div>
+
+              <div class="tasks-container">
+                <div class="task" *ngFor="let item of doneTasks" cdkDrag>{{item.title}}</div>
+              </div>
             </div>
           </div>
 
-          <div class="board-column"
-               cdkDropList
-               #doingList="cdkDropList"
-               [cdkDropListData]="doingTasks"
-               (cdkDropListDropped)="drop($event)">
-
-            <div class="column-title">
-              In progress
-            </div>
-
-            <div class="tasks-container">
-              <div class="task" *ngFor="let item of doingTasks" cdkDrag>{{item.title}}</div>
-            </div>
-          </div>
-
-          <div class="board-column"
-               cdkDropList
-               #doneList="cdkDropList"
-               [cdkDropListData]="doneTasks"
-               (cdkDropListDropped)="drop($event)">
-
-            <div class="column-title">
-              Done
-            </div>
-
-            <div class="tasks-container">
-              <div class="task" *ngFor="let item of doneTasks" cdkDrag>{{item.title}}</div>
-            </div>
-          </div>
         </div>
 
+        <h3 class="empty-state-text is-4" *ngIf="tasks.length === 0">There are no tasks in this project. Click the add button to create a new task.</h3>
+
+        <button routerLink="./new-task"  class="circle-add-button button is-primary">
+          <img src="../../../assets/plus-icon.png"  id="plus-icon" />
+        </button>
       </div>
 
-      <button routerLink="./new-task"  class="circle-add-button button is-primary">
-        <img src="../../../assets/plus-icon.png"  id="plus-icon" />
-      </button>
+      <div *ngIf="!tasks">
+        <h3 class="empty-state-text is-4">Please select a project from the sidebar.</h3>
+      </div>
+
     </div>
 
   </div>
