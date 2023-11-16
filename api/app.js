@@ -35,9 +35,18 @@ let authenticate = (req, res, next) => {
     let token = req.header('x-access-token');
 
     // Verify the JWT
-    jwt.verify(token, User.getJWTSecret(), (err, decoded) =>{
-
-    })
+    jwt.verify(token, User.getJWTSecret(), (err, decoded) => {
+        if (err) {
+            // There was an error
+            // jwt is invalid - DO NOT AUTHENTICATE
+            res.status(401).send(err);
+        }
+        else{
+            // jwt is valid
+            req.user_id = decoded._id;
+            next();
+        }
+    });
 }
 
 // Verify refresh token Middleware (which will be verifying the session)
@@ -98,24 +107,29 @@ let verifySession = (req, res, next) => {
  * GET /projects
  * Purpose: Get all projects
  */
-app.get('/projects', (req,res) => {
-    // Return an array of all the projects in the database
-    Project.find({}).then((projects) => {
+app.get('/projects', authenticate, (req,res) => {
+    // Return an array of all the projects in the database that belong to the authenticated user
+    Project.find({
+        _userId: req.user_id
+    }).then((projects) => {
         res.send(projects);
-    })
+    }).catch((e) => {
+        res.send(e);
+    });
 })
 
 /**
  * POST /projects
  * Purpose: Create a project
  */
-app.post('/projects', (req,res) => {
+app.post('/projects', authenticate, (req,res) => {
     // Create a new project and returns the new project document to the user (with id)
     // The project information (fields) will be passed in via the JSON body
     let title = req.body.title;
 
     let newProject = new Project({
-        title
+        title,
+        _userId: req.user_id
     });
 
     newProject.save().then((projectDoc) => {
@@ -129,9 +143,9 @@ app.post('/projects', (req,res) => {
  * PATH /projects/:id
  * Purpose: Update a specified project
  */
-app.patch('/projects/:id', (req,res)=>{
+app.patch('/projects/:id', authenticate, (req,res)=>{
     // Update specified project (project document with id in the URL) with the new values of the JSON body of the request
-    Project.findOneAndUpdate({_id: req.params.id}, {
+    Project.findOneAndUpdate({_id: req.params.id, _userId: req.user_id}, {
       $set: req.body
     }).then(() => {
         res.sendStatus(200);
@@ -142,11 +156,21 @@ app.patch('/projects/:id', (req,res)=>{
  * DELETE /projects/
  * Purpose: Delete a specified project
  */
-app.delete('/projects/:id', (req,res) => {
+app.delete('/projects/:id', authenticate, (req,res) => {
     // Delete a specified project (document with id in the url)
     Project.findOneAndDelete({
-        _id: req.params.id}).then((removedListDoc) => {
-        res.send(removedListDoc);
+        _id: req.params.id,
+        _userId: req.user_id
+    }).then((removedListDoc) => {
+        if(removedListDoc) {
+            res.send(removedListDoc);
+
+            // Delete all the tasks in the deleted project
+            deleteTasksFromProject(removedListDoc._id);
+        }
+        else{
+            res.sendStatus(401);
+        }
     })
 })
 
@@ -156,89 +180,174 @@ app.delete('/projects/:id', (req,res) => {
  * GET /projects/:projectId/tasks
  * Purpose: Get all tasks of a specific project
  */
-app.get("/projects/:projectId/tasks", (req,res) => {
-    // Return all tasks belonging to a specific project
-    Task.find({
-        _projectId: req.params.projectId
-    }).sort({statusIndex : 'asc'})
-        .then((tasks) => {
-        res.send(tasks);
-    })
+app.get("/projects/:projectId/tasks", authenticate, (req,res) => {
+    // Checking first if a user is authorised to get tasks
+    Project.findOne({
+        _id: req.params.projectId,
+        _userId: req.user_id
+    }).then((project) => {
+        if(project){
+            // Project object is valid
+            // The current user can create a new task
+            return true;
+        }
+        else
+            // Project not defined
+            return false;
+    }).then((canGetTasks) => {
+        if(canGetTasks){
+            // Return all tasks belonging to a specific project
+            Task.find({
+                _projectId: req.params.projectId
+            }).sort({statusIndex : 'asc'})
+                .then((tasks) => {
+                    res.send(tasks);
+                })
+        }
+        else
+            res.sendStatus(401);
+    });
 });
 
-/**
- * GET /projects/:projectId/tasks/:taskId
- * Purpose: Get task with specified id
- */
-app.get("/projects/:projectId/tasks/:taskId", (req, res) => {
-    // Return task with specified id
-    Task.findOne({
-        _projectId: req.params.projectId,
-        _id: req.params.taskId
-    }).then((task) => {
-        res.send(task);
-    })
-})
+// /**
+//  * GET /projects/:projectId/tasks/:taskId
+//  * Purpose: Get task with specified id
+//  */
+// app.get("/projects/:projectId/tasks/:taskId", (req, res) => {
+//     // Return task with specified id
+//     Task.findOne({
+//         _projectId: req.params.projectId,
+//         _id: req.params.taskId
+//     }).then((task) => {
+//         res.send(task);
+//     })
+// })
 
 /**
  * POST /projects/:projectId/tasks
  * Purpose: Create a new task for a specified project in a specified bucket
  */
-app.post("/projects/:projectId/tasks", (req,res) => {
-    let taskIndex = 0;
-
-    // Check the index of the last task
-    Task.findOne({_projectId: req.params.projectId, taskStatus : req.body.taskStatus}).sort({statusIndex : -1}).then((lastTask) => {
-        let maxIndex;
-
-        if(lastTask != null)
-            maxIndex = lastTask.statusIndex;
+app.post("/projects/:projectId/tasks", authenticate, (req,res) => {
+    // Checking first if a user is authorised
+    Project.findOne({
+        _id: req.params.projectId,
+        _userId: req.user_id
+    }).then((project) => {
+        if(project){
+            // Project object is valid
+            // The current user can create a new task
+            return true;
+        }
         else
-            maxIndex = 0;
+            // Project not defined
+            return false;
+    }).then((canCreateTask) => {
+        if(canCreateTask){
+            // Letting the user create the task
+            let taskIndex = 0;
 
-        taskIndex = maxIndex + 1024
+            // Check the index of the last task
+            Task.findOne({_projectId: req.params.projectId, taskStatus : req.body.taskStatus}).sort({statusIndex : -1}).then((lastTask) => {
+                let maxIndex;
 
-        // Create a new task in a project, specified by a project id
-        let newTask = new Task({
-            title: req.body.title,
-            taskStatus: req.body.taskStatus,
-            _projectId: req.params.projectId,
-            statusIndex: taskIndex
-        });
+                if(lastTask != null)
+                    maxIndex = lastTask.statusIndex;
+                else
+                    maxIndex = 0;
 
-        newTask.save().then((newTaskDoc) => {
-            res.send(newTaskDoc);
-        })
-    });
+                taskIndex = maxIndex + 1024
+
+                // Create a new task in a project, specified by a project id
+                let newTask = new Task({
+                    title: req.body.title,
+                    taskStatus: req.body.taskStatus,
+                    _projectId: req.params.projectId,
+                    statusIndex: taskIndex
+                });
+
+                newTask.save().then((newTaskDoc) => {
+                    res.send(newTaskDoc);
+                })
+            });
+        }
+        else{
+            res.sendStatus(404);
+        }
+    })
 });
 
 /**
  * PATCH /projects/:projectId/tasks/:taskId
  * Purpose: update an existing task
  */
-app.patch("/projects/:projectId/tasks/:taskId", (req, res) => {
-    // Update specific task specified by taskId
-    Task.findOneAndUpdate({
-        _id: req.params.taskId,
-        _projectId: req.params.projectId
-    }, {
-        $set: req.body
-    }).then(() =>{
-        // res.sendStatus(200);
-        res.send({message: "Updated successfully"});
-    })
+app.patch("/projects/:projectId/tasks/:taskId", authenticate, (req, res) => {
+    // Check if the current user is authorised
+
+    Project.findOne({
+        _id: req.params.projectId,
+        _userId: req.user_id
+    }).then((project) => {
+        if(project){
+            // Project object is valid
+            // The current user can make updates to tasks within this project
+            return true;
+        }
+        else
+            // Project not defined
+            return false;
+    }).then((canUpdateTasks ) => {
+        if(canUpdateTasks){
+            // The currently authenticated users can update tasks
+            // Update specific task specified by taskId
+            Task.findOneAndUpdate({
+                _id: req.params.taskId,
+                _projectId: req.params.projectId
+            }, {
+                $set: req.body
+            }).then(() =>{
+                // res.sendStatus(200);
+                res.send({message: "Updated successfully"});
+            })
+        }
+        else{
+            res.sendStatus(404);
+        }
+    });
 });
 
 /**
  * DELETE /projects/:projectId/tasks/:taskId
  * Purpose: delete an existing task
  */
-app.delete("/projects/:projectId/tasks/:taskId", (req, res) => {
-    Task.findOneAndDelete({
-        _id: req.params.taskId,
-        _projectId: req.params.projectId}).then((removedTaskDoc) => {
-        res.send(removedTaskDoc);
+app.delete("/projects/:projectId/tasks/:taskId", authenticate, (req, res) => {
+    // Check if the current user is authorised
+
+    Project.findOne({
+        _id: req.params.projectId,
+        _userId: req.user_id
+    }).then((project) => {
+        if(project){
+            // Project object is valid
+            // The current user can make updates to tasks within this project
+            return true;
+        }
+        else
+            // Project not defined
+            return false;
+    }).then((canDeleteTasks ) => {
+        if(canDeleteTasks){
+            Task.findOneAndDelete({
+                _id: req.params.taskId,
+                _projectId: req.params.projectId}).then((removedTaskDoc) => {
+                res.send(removedTaskDoc);
+            })
+        }
+        else{
+            res.sendStatus(404);
+        }
     })
+
+
 });
 
 /* USER ROUTES */
@@ -318,6 +427,15 @@ app.get('/users/me/access-token', verifySession, (req, res) => {
         res.status(400).send(e);
     })
 })
+
+/* HELPER METHODS */
+let deleteTasksFromProject = (_projectId) => {
+    Task.deleteMany({
+        _projectId
+    }).then(() => {
+        console.log("Tasks from "+_projectId);
+    });
+}
 
 app.listen(3000, () => {
     console.log("Server is listening on port 3000");
