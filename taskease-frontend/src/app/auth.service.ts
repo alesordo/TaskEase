@@ -36,6 +36,28 @@ export class AuthService {
     );
   }
 
+  signup(email: string, password: string){
+    return this.http.post(`${this.ROOT_URL}/users`, {
+      email,
+      password
+    }, {
+      observe: 'response'
+    }).pipe(
+      // No multiple subscribers to execute this method
+      shareReplay(),
+      tap((res: HttpResponse<any>) => {
+        // The auth tokens will be in the header of this response -checking if they're strings present, otherwise fail
+        let accessToken = res.headers.get('x-access-token');
+        let refreshToken = res.headers.get('x-refresh-token');
+
+        if (accessToken && refreshToken) {
+          this.setSession(res.body._id, accessToken, refreshToken);
+          console.log("Signed up and logged in!");
+        }
+      })
+    );
+  }
+
   logout(){
     this.removeSession();
 

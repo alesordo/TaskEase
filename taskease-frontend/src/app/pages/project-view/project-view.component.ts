@@ -10,7 +10,7 @@ import {
 import {Board} from "../../models/board.model";
 import {Task} from "../../models/task.model";
 import {TaskService} from "../../task.service";
-import {ActivatedRoute, Params} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {Project} from "../../models/project.model";
 import {NONE_TYPE} from "@angular/compiler";
 
@@ -30,9 +30,9 @@ export class ProjectViewComponent implements OnInit {
 
   doneTasks: Task[];
 
-  projectSelected = false;
+  selectedProjectId: string;
 
-  constructor(private taskService: TaskService, private route: ActivatedRoute) { }
+  constructor(private taskService: TaskService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(){
     this.route.params.subscribe((
@@ -43,6 +43,7 @@ export class ProjectViewComponent implements OnInit {
           console.log(projects);
         })
         if (params['projectId'] != null) {
+          this.selectedProjectId = params['projectId'];
           this.taskService.getTasks(params['projectId']).subscribe((tasks: Task[]) => {
             // // Getting all tasks
             this.tasks = tasks;
@@ -106,5 +107,12 @@ export class ProjectViewComponent implements OnInit {
 
     // Sending the update to server
     this.taskService.updateTasksBin(updatedTasks);
+  }
+
+  onDeleteProjectClick() {
+    this.taskService.deleteProject(this.selectedProjectId).subscribe((res: any) => {
+      this.router.navigate(['/projects']);
+      console.log(res);
+    });
   }
 }

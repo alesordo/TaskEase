@@ -24,9 +24,19 @@ export class TaskService {
     return this.http.post<Project>(`${this.ROOT_URL}/projects`, { title });
   }
 
+  updateProject(id: string, title: string){
+    // Sends a web request to edit a project
+    // return this.webReqService.post('projects', { title });
+    return this.http.patch(`${this.ROOT_URL}/projects/${id}`, { title });
+  }
+
   getProjects() {
     // return this.webReqService.get('projects');
     return this.http.get<Project[]>(`${this.ROOT_URL}/projects`)
+  }
+
+  deleteProject(id: string) {
+    return this.http.delete(`${this.ROOT_URL}/projects/${id}`);
   }
 
   getTasks(projectId: string){

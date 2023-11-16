@@ -15,6 +15,8 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {NgOptimizedImage} from "@angular/common";
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import {WebReqInterceptor} from "./web-req.interceptor";
+import { SignupPageComponent } from './pages/signup-page/signup-page.component';
+import { EditProjectComponent } from './pages/edit-project/edit-project.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import {WebReqInterceptor} from "./web-req.interceptor";
     ProjectViewComponent,
     NewProjectComponent,
     NewTaskComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    SignupPageComponent,
+    EditProjectComponent
   ],
     imports: [
         BrowserModule,

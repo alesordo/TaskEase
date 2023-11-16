@@ -21,9 +21,33 @@
     </div>
     <div class="project-kanban-board-container has-background-light">
       <div class="kanban-whole-wrapper" *ngIf="tasks">
-        <h1 class="title has-text-primary">
-          Kanban board
-        </h1>
+        <div class="top-bar">
+          <h1 class="title has-text-primary">
+            Kanban board
+          </h1>
+
+          <div class="dropdown is-hoverable is-right">
+            <div class="dropdown-trigger">
+              <button class="button" aria-haspopup="true">
+                <span class="icon is-small">
+                  <i class="fas fa-cog" aria-hidden="true"></i>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+              <div class="dropdown-content">
+                <a class="dropdown-item" [routerLink]="['/edit-project/', selectedProjectId]">
+                  Edit
+                </a>
+                <a (click)="onDeleteProjectClick()" class="dropdown-item has-text-danger">
+                  Delete
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
 
         <div class="board-wrapper" *ngIf="tasks.length !== 0">
 
@@ -40,7 +64,23 @@
               </div>
 
               <div class="tasks-container">
-                <div class="task" *ngFor="let item of toDoTasks" cdkDrag>{{item.title}}</div>
+                <div class="task" *ngFor="let item of toDoTasks" cdkDrag>
+                  <div class="task-text">
+                    {{item.title}}
+                  </div>
+                  <div class="task-buttons">
+                    <button class="button is-small">
+                      <div class="icon">
+                        <i class="fas fa-edit"></i>
+                      </div>
+                    </button>
+                    <button class="button is-danger is-small">
+                      <div class="icon">
+                        <i class="fas fa-trash"></i>
+                      </div>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -56,7 +96,23 @@
               </div>
 
               <div class="tasks-container">
-                <div class="task" *ngFor="let item of doingTasks" cdkDrag>{{item.title}}</div>
+                <div class="task" *ngFor="let item of doingTasks" cdkDrag>
+                  <div class="task-text">
+                    {{item.title}}
+                  </div>
+                  <div class="task-buttons">
+                    <button class="button is-small">
+                      <div class="icon">
+                        <i class="fas fa-edit"></i>
+                      </div>
+                    </button>
+                    <button class="button is-danger is-small">
+                      <div class="icon">
+                        <i class="fas fa-trash"></i>
+                      </div>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -72,7 +128,23 @@
               </div>
 
               <div class="tasks-container">
-                <div class="task" *ngFor="let item of doneTasks" cdkDrag>{{item.title}}</div>
+                <div class="task" *ngFor="let item of doneTasks" cdkDrag>
+                  <div class="task-text">
+                    {{item.title}}
+                  </div>
+                  <div class="task-buttons">
+                    <button class="button is-small">
+                      <div class="icon">
+                        <i class="fas fa-edit"></i>
+                      </div>
+                    </button>
+                    <button class="button is-danger is-small">
+                      <div class="icon">
+                        <i class="fas fa-trash"></i>
+                      </div>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

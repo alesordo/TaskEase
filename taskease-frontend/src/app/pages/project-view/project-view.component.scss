@@ -52,6 +52,16 @@
   .kanban-whole-wrapper {
     display: contents;
 
+    .top-bar{
+      display: flex;
+      margin-bottom: 10px;
+
+      .title{
+        flex-grow: 1;
+        margin: 0;
+      }
+    }
+
     .board-wrapper {
       display: flex;
       flex-grow: 1;
@@ -126,14 +136,36 @@
 
 .task{
   display: flex;
-  padding: 15px 12px;
+  padding: 15px 8px 15px 12px;
   background: white;
   border-bottom: solid 1px #dddd;
   border-radius: 4px;
 
+  align-items: center;
+
   margin-bottom: 10px;
 
   box-shadow: 0 5px -3px rgba(0, 0, 0, 0.05), 0 3px 14px 2px rgba(0, 0, 0, 0.05);
+
+  &:hover{
+    .task-buttons{
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .task-text{
+    flex-grow: 1;
+  }
+
+  .task-buttons{
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    transform: scale(0.85);
+    .button{
+      margin: 0.5px;
+    }
+  }
 }
 
 .cdk-drag-preview {
