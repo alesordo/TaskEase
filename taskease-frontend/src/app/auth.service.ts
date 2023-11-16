@@ -38,6 +38,8 @@ export class AuthService {
 
   logout(){
     this.removeSession();
+
+    this.router.navigate(['/login']);
   }
 
   getAccessToken(){
@@ -48,19 +50,46 @@ export class AuthService {
     return localStorage.getItem('x-refresh-token');
   }
 
+  getUserId(){
+    return localStorage.getItem('user-id');
+  }
+
   setAccessToken(accessToken: string){
     localStorage.setItem('x-access-token', accessToken);
   }
 
   private setSession(userId: string, accessToken: string, refreshToken: string){
     localStorage.setItem('user-id', userId);
-    localStorage.setItem('access-token', accessToken);
-    localStorage.setItem('refresh-token', refreshToken);
+    localStorage.setItem('x-access-token', accessToken);
+    localStorage.setItem('x-refresh-token', refreshToken);
   }
 
   private removeSession(){
     localStorage.removeItem('user-id');
-    localStorage.removeItem('access-token');
-    localStorage.removeItem('refresh-token');
+    localStorage.removeItem('x-access-token');
+    localStorage.removeItem('x-refresh-token');
+  }
+
+  getNewAccessToken(){
+    let refreshToken = this.getRefreshToken();
+    let userId = this.getUserId()
+
+    if(refreshToken && userId) {
+      return this.http.get(`${this.webReqService.ROOT_URL}/users/me/access-token`, {
+        headers: {
+          'x-refresh-token': refreshToken,
+          '_id': userId
+        },
+        observe: 'response'
+      })
+        .pipe(
+        tap((res: HttpResponse<any>) => {
+          this.setAccessToken(res.headers.get('x-access-token')!);
+        })
+      )
+    }
+    else{
+      return this.http.get(`${this.webReqService.ROOT_URL}/users/me/access-token`);
+    }
   }
 }

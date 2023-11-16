@@ -7,13 +7,14 @@ import { ProjectViewComponent } from './pages/project-view/project-view.componen
 
 import { DragDropModule } from "@angular/cdk/drag-drop";
 
-import { HttpClientModule } from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import { NewProjectComponent } from './pages/new-project/new-project.component';
 import { NewTaskComponent } from './pages/new-task/new-task.component';
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {NgOptimizedImage} from "@angular/common";
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import {WebReqInterceptor} from "./web-req.interceptor";
 
 @NgModule({
   declarations: [
@@ -32,7 +33,9 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
         MatDatepickerModule,
         NgOptimizedImage
     ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: WebReqInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
