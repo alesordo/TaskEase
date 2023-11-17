@@ -15,7 +15,7 @@ $light: #f8f8f8;
 $family-sans-serif: "Work", sans-serif;
 $primary: $orange;
 
-$link: $light-orange;
+$link: $deep-orange;
 
 // Update Bulma's components variables
 $control-border-width: 2px;
@@ -58,4 +58,7 @@ html, body{
   padding: 35px;
   background: white;
   border-radius: 5px;
+
+  width: 350px;
+  max-width: 350px;
 }

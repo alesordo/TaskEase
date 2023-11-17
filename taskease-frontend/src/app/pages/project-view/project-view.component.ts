@@ -115,4 +115,13 @@ export class ProjectViewComponent implements OnInit {
       console.log(res);
     });
   }
+
+  onDeleteTaskClick(id: string){
+    this.taskService.deleteTask(this.selectedProjectId, id).subscribe((res: any) => {
+      this.toDoTasks = this.toDoTasks.filter(val => val._id !== id);
+      this.doingTasks = this.doingTasks.filter(val => val._id !== id);
+      this.doneTasks = this.doneTasks.filter(val => val._id !== id);
+    });
+  }
+
 }

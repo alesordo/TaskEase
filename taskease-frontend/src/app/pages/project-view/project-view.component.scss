@@ -4,6 +4,9 @@
   display: flex;
   flex-direction: column;
   height: 5%;
+  img{
+    filter: invert(1);
+  }
 }
 
 .app-name{

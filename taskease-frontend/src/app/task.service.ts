@@ -51,6 +51,16 @@ export class TaskService {
     return this.http.post<Task>(`${this.ROOT_URL}/projects/${projectId}/tasks`, {title, taskStatus});
   }
 
+  deleteTask(projectId: string, taskId: string) {
+    return this.http.delete(`${this.ROOT_URL}/projects/${projectId}/tasks/${taskId}`);
+  }
+
+  updateTask(taskId: string, projectId: string, title: string){
+    // Sends a web request to edit a project
+    // return this.webReqService.post('projects', { title });
+    return this.http.patch(`${this.ROOT_URL}/projects/${projectId}/tasks/${taskId}`, { title });
+  }
+
   updateTasksBin(tasks: Task[]){
     let status = {message: "Updated successfully"};
 

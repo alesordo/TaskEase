@@ -6,6 +6,7 @@ import {NewTaskComponent} from "./pages/new-task/new-task.component";
 import {LoginPageComponent} from "./pages/login-page/login-page.component";
 import {SignupPageComponent} from "./pages/signup-page/signup-page.component";
 import {EditProjectComponent} from "./pages/edit-project/edit-project.component";
+import {EditTaskComponent} from "./pages/edit-task/edit-task.component";
 
 const routes: Routes = [
   { path: '', redirectTo: '/projects', pathMatch: 'full'},
@@ -15,7 +16,8 @@ const routes: Routes = [
   { path: 'signup', component: SignupPageComponent},
   { path: 'projects', component: ProjectViewComponent},
   { path: 'projects/:projectId', component: ProjectViewComponent},
-  { path: 'projects/:projectId/new-task', component: NewTaskComponent}
+  { path: 'projects/:projectId/new-task', component: NewTaskComponent},
+  { path: 'projects/:projectId/edit-task/:taskId', component: EditTaskComponent}
 ];
 
 @NgModule({

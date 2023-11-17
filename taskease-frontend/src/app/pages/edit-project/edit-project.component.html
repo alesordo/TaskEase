@@ -7,7 +7,7 @@
     <input #projectTitleInput class="input has-background-light is-medium" type="text" placeholder="Project title">
     <br><br>
     <div class="buttons is-right">
-      <button class="button is-medium" routerLink="/">Cancel</button>
+      <button class="button is-medium" [routerLink]="['/projects', projectId]">Cancel</button>
       <button class="button is-primary has-text-white is-medium" (click)="updateProject(projectTitleInput.value)">Save</button>
     </div>
   </div>

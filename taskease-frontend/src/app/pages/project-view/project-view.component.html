@@ -1,6 +1,7 @@
 <div class="navbar has-background-dark">
   <div class="navbar-item">
     <div class="navbar-brand">
+<!--      <img src="/assets/logo-taskease.png">-->
       <h1 class="app-name has-gradient-text">TaskEase</h1>
     </div>
   </div>
@@ -69,12 +70,12 @@
                     {{item.title}}
                   </div>
                   <div class="task-buttons">
-                    <button class="button is-small">
+                    <button class="button is-small" [routerLink]="['/projects', selectedProjectId, 'edit-task', item._id]">
                       <div class="icon">
                         <i class="fas fa-edit"></i>
                       </div>
                     </button>
-                    <button class="button is-danger is-small">
+                    <button class="button is-danger is-small" (click)="onDeleteTaskClick(item._id)">
                       <div class="icon">
                         <i class="fas fa-trash"></i>
                       </div>
@@ -101,12 +102,12 @@
                     {{item.title}}
                   </div>
                   <div class="task-buttons">
-                    <button class="button is-small">
+                    <button class="button is-small" [routerLink]="['/projects', selectedProjectId, 'edit-task', item._id]">
                       <div class="icon">
                         <i class="fas fa-edit"></i>
                       </div>
                     </button>
-                    <button class="button is-danger is-small">
+                    <button class="button is-danger is-small" (click)="onDeleteTaskClick(item._id)">
                       <div class="icon">
                         <i class="fas fa-trash"></i>
                       </div>
@@ -133,12 +134,12 @@
                     {{item.title}}
                   </div>
                   <div class="task-buttons">
-                    <button class="button is-small">
+                    <button class="button is-small" [routerLink]="['/projects', selectedProjectId, 'edit-task', item._id]">
                       <div class="icon">
                         <i class="fas fa-edit"></i>
                       </div>
                     </button>
-                    <button class="button is-danger is-small">
+                    <button class="button is-danger is-small" (click)="onDeleteTaskClick(item._id)">
                       <div class="icon">
                         <i class="fas fa-trash"></i>
                       </div>
