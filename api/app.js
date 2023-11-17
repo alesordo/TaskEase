@@ -358,7 +358,6 @@ app.delete("/projects/:projectId/tasks/:taskId", authenticate, (req, res) => {
  */
 app.post('/users', (req,res) => {
     // User sign up
-
     let body = req.body;
     let newUser = new User(body);
 
@@ -437,6 +436,8 @@ let deleteTasksFromProject = (_projectId) => {
     });
 }
 
-app.listen(3000, () => {
+const server = app.listen(3000, () => {
     console.log("Server is listening on port 3000");
 })
+
+module.exports = server;
