@@ -113,9 +113,7 @@ app.get('/projects', authenticate, (req,res) => {
         _userId: req.user_id
     }).then((projects) => {
         res.send(projects);
-    }).catch((e) => {
-        res.send(e);
-    });
+    })
 })
 
 /**
@@ -135,6 +133,9 @@ app.post('/projects', authenticate, (req,res) => {
     newProject.save().then((projectDoc) => {
         // The full project document is returned (incl. id)
         res.send(projectDoc);
+    }).catch((e) => {
+        // Error on req body
+        res.status(400).send(e);
     })
 });
 
@@ -147,8 +148,17 @@ app.patch('/projects/:id', authenticate, (req,res)=>{
     // Update specified project (project document with id in the URL) with the new values of the JSON body of the request
     Project.findOneAndUpdate({_id: req.params.id, _userId: req.user_id}, {
       $set: req.body
-    }).then(() => {
-        res.send({ 'message': 'Updated successfully' });
+    }).then((updated) => {
+        if(updated){
+            res.send({ 'message': 'Updated successfully' });
+        }
+        else{
+            // Req header + params combination not found
+            res.sendStatus(401);
+        }
+    }).catch((e) => {
+        // Error on req params
+        res.status(400).send(e);
     })
 })
 
@@ -161,16 +171,20 @@ app.delete('/projects/:id', authenticate, (req,res) => {
     Project.findOneAndDelete({
         _id: req.params.id,
         _userId: req.user_id
-    }).then((removedListDoc) => {
-        if(removedListDoc) {
-            res.send(removedListDoc);
+    }).then((removedProjectDoc) => {
+        if(removedProjectDoc) {
+            res.send(removedProjectDoc);
 
             // Delete all the tasks in the deleted project
-            deleteTasksFromProject(removedListDoc._id);
+            deleteTasksFromProject(removedProjectDoc._id);
         }
         else{
+            // Req header + params combination not found
             res.sendStatus(401);
         }
+    }).catch((e) => {
+        // Error on req params
+        res.status(400).send(e);
     })
 })
 
@@ -205,8 +219,13 @@ app.get("/projects/:projectId/tasks", authenticate, (req,res) => {
                 })
         }
         else
-            res.sendStatus(401);
-    });
+            // Req header + params combination not found
+            res.sendStatus(404);
+    })
+        .catch((e) => {
+            // Error on req params
+            res.status(400).send(e);
+        });
 });
 
 // /**
@@ -267,13 +286,21 @@ app.post("/projects/:projectId/tasks", authenticate, (req,res) => {
 
                 newTask.save().then((newTaskDoc) => {
                     res.send(newTaskDoc);
-                })
-            });
+                }).catch((e) => {
+                    // Error on task parameters
+                    res.status(400).send(e);
+                });
+            })
         }
         else{
+            // Req header + params combination not found
             res.sendStatus(404);
         }
     })
+        .catch((e) => {
+            // Error on req params
+            res.status(400).send(e);
+        })
 });
 
 /**
@@ -305,14 +332,23 @@ app.patch("/projects/:projectId/tasks/:taskId", authenticate, (req, res) => {
             }, {
                 $set: req.body
             }).then(() =>{
-                // res.sendStatus(200);
                 res.send({message: "Updated successfully"});
             })
+                .catch((e) => {
+                    // Task parameters not valid for task creation
+                    // (e.g. task not present on given project or wrong data types)
+                    res.status(404).send(e);
+                })
         }
         else{
+            // Req header + params combination not found
             res.sendStatus(404);
         }
-    });
+    })
+        .catch((e) => {
+            // Error on req params
+            res.status(400).send(e);
+        });
 });
 
 /**
@@ -341,13 +377,21 @@ app.delete("/projects/:projectId/tasks/:taskId", authenticate, (req, res) => {
                 _projectId: req.params.projectId}).then((removedTaskDoc) => {
                 res.send(removedTaskDoc);
             })
+                .catch((e) => {
+                    // Task parameters not valid for task creation
+                    // (e.g. task not present on given project or wrong data types)
+                    res.status(404).send(e);
+                })
         }
         else{
+            // Req header + params combination not found
             res.sendStatus(404);
         }
     })
-
-
+        .catch((e) => {
+            // Error on req params
+            res.status(400).send(e);
+        })
 });
 
 /* USER ROUTES */
@@ -361,25 +405,43 @@ app.post('/users', (req,res) => {
     let body = req.body;
     let newUser = new User(body);
 
-    newUser.save().then(() => {
-        return newUser.createSession();
-    }).then((refreshToken) => {
-        // Session created successfully - refreshToken returned.
-        // Now generating an access token for the user
+    // Checking if a user with the same email already exists
+    User.findOne({
+        email: req.body.email
+    }).then((exists) => {
+        if(exists){
+            // A user with this email already exists, will return 403
+            return false;
+        }
+        else {
+            return true;
+        }
+    }).then((canCreateUser) => {
+        if(canCreateUser){
+            newUser.save().then(() => {
+                return newUser.createSession();
+            }).then((refreshToken) => {
+                // Session created successfully - refreshToken returned.
+                // Now generating an access token for the user
 
-        return newUser.generateAccessAuthToken().then((accessToken) => {
-            //Access auth token generated successfully, now returing an object containing the auth tokens
-            return {accessToken, refreshToken}
-        });
-    }).then((authTokens) => {
-        // Constructing and sending the response to the user with their auth tokens in the header and the user object in the body
-        res
-            .header('x-refresh-token', authTokens.refreshToken)
-            .header('x-access-token', authTokens.accessToken)
-            .send(newUser);
-    }).catch((e) => {
-        res.status(400).send(e);
-    })
+                return newUser.generateAccessAuthToken().then((accessToken) => {
+                    //Access auth token generated successfully, now returing an object containing the auth tokens
+                    return {accessToken, refreshToken}
+                });
+            }).then((authTokens) => {
+                // Constructing and sending the response to the user with their auth tokens in the header and the user object in the body
+                res
+                    .header('x-refresh-token', authTokens.refreshToken)
+                    .header('x-access-token', authTokens.accessToken)
+                    .send(newUser);
+            }).catch((e) => {
+                res.status(400).send(e);
+            })
+        }
+        else{
+            res.sendStatus(403);
+        }
+    });
 })
 
 /**
