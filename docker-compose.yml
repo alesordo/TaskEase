@@ -2,19 +2,29 @@ version: '3.8' # specify docker-compose version
 
 # Define the services/ containers to be run
 services:
-  angular: # name of the first service
+  frontend: # name of the first service
     build: taskease-frontend # specify the directory of the Dockerfile
+    hostname: localhost
     ports:
       - "4200:4200" # specify port mapping
+    networks:
+      - mynetwork
 
-  express: # name of the second service
+  backend: # name of the second service
     build: api # specify the directory of the Dockerfile
     ports:
       - "3000:3000" #specify ports mapping
     links:
       - database # link this service to the database service
+    networks:
+      - mynetwork
 
   database: # name of the third service
-    image: mongo # specify image to build container from
+    image: mongo:latest # specify image to build container from
     ports:
       - "27017:27017" # specify port forwarding
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:

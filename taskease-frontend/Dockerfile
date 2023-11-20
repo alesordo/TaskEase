@@ -1,9 +1,17 @@
-FROM node:6
+FROM node:20.9-alpine
+
 RUN mkdir -p /usr/src/app
+
 WORKDIR /usr/src/app
-COPY package.json /usr/src/app
-RUN npm cache clean
+
+COPY package*.json ./
+
 RUN npm install
-COPY . /usr/src/app
+
+COPY . .
+
+RUN npm run build
+
 EXPOSE 4200
-CMD ["ng","serve"]
+
+CMD ["npm","run","docker-start"]

@@ -1,9 +1,15 @@
-FROM node:6
+FROM node:20.9-alpine
+
 RUN mkdir -p /usr/src/app
+
 WORKDIR /usr/src/app
+
 COPY package.json /usr/src/app
-RUN npm cache clean
+
 RUN npm install
+
 COPY . /usr/src/app
+
 EXPOSE 3000
-CMD ["npm","run","start"]
+
+CMD ["npm","start"]
