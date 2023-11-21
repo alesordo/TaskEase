@@ -83,11 +83,11 @@ describe("POST /users for Sign Up", () => {
 });
 
 describe("POST /users/login for Login", () => {
-    it("should return 404 - login with missing fields", async () => {
-        const res = await request(app).post("/users/loign").send({
+    it("should return 401 - login with missing fields", async () => {
+        const res = await request(app).post("/users/login").send({
             email: "test@test.com"
         });
-        expect(res.statusCode).toBe(404);
+        expect(res.statusCode).toBe(401);
     });
 
     it("should return 200 and tokens - login with correct fields", async () => {
