@@ -4,16 +4,20 @@ version: '3.8' # specify docker-compose version
 services:
   frontend: # name of the first service
     build: taskease-frontend # specify the directory of the Dockerfile
-    hostname: localhost
+#    hostname: localhost
     ports:
       - "4200:4200" # specify port mapping
+#      - "4200:80" # specify port mapping
     networks:
       - mynetwork
 
   backend: # name of the second service
     build: api # specify the directory of the Dockerfile
+    hostname: localhost
     ports:
       - "3000:3000" #specify ports mapping
+    expose:
+      - "3000"
     links:
       - database # link this service to the database service
     networks:
@@ -21,10 +25,24 @@ services:
 
   database: # name of the third service
     image: mongo:latest # specify image to build container from
+    hostname: localhost
+    environment:
+      - MONGO_INITDB_DATABASE=TaskEase
     ports:
       - "27017:27017" # specify port forwarding
-    networks:
-      - mynetwork
+    expose:
+      - "27017"
+#    networks:
+#      - mynetwork
+
+#  nginx:
+#    build: ./nginx
+#    restart: always
+#    ports:
+#      - "80:80"
+#    links:
+#      - frontend
+#      - backend
 
 networks:
   mynetwork:
