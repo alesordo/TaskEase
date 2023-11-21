@@ -13,27 +13,28 @@ services:
 
   backend: # name of the second service
     build: api # specify the directory of the Dockerfile
+    environment:
+      - DB_URI=mongodb://database:27017/TaskEase
     hostname: localhost
     ports:
       - "3000:3000" #specify ports mapping
     expose:
       - "3000"
-    links:
-      - database # link this service to the database service
+#    links:
+#      - database # link this service to the database service
     networks:
       - mynetwork
 
   database: # name of the third service
     image: mongo:latest # specify image to build container from
-    hostname: localhost
     environment:
       - MONGO_INITDB_DATABASE=TaskEase
     ports:
       - "27017:27017" # specify port forwarding
     expose:
       - "27017"
-#    networks:
-#      - mynetwork
+    networks:
+      - mynetwork
 
 #  nginx:
 #    build: ./nginx
