@@ -1,8 +1,9 @@
 // This file will handle the connection logic to the MongoDB database
 const mongoose = require("mongoose");
+require('dotenv').config()
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/TaskEase', { useNewUrlParser: true }).then(() => {
+mongoose.connect(process.env.DB_URI, { useNewUrlParser: true }).then(() => {
     console.log("Connected successfully to MongoDB!");
 }).catch((e) =>{
     console.log("Error while trying to connect to MongoDB");
